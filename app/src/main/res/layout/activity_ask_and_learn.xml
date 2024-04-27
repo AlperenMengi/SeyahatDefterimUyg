@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".view.AskAndLearnActivity">
+
+    <EditText
+        android:id="@+id/editTextTex"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:textSize="25sp"
+        android:inputType="text"
+        android:layout_margin="5dp"
+        android:hint="Promptunuzu Buraya Giriniz!"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="76dp" />
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Gönder"
+        android:textSize="15sp"
+        android:layout_margin="5dp"
+        tools:layout_editor_absoluteX="149dp"
+        tools:layout_editor_absoluteY="211dp" />
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Cevap burada gözükecektir"
+        android:layout_margin="5dp"
+        android:textSize="25sp"
+        tools:layout_editor_absoluteX="164dp"
+        tools:layout_editor_absoluteY="311dp" />
+
+
+</LinearLayout>

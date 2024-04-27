@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">SeyehatDefterim</string>
+    <string name="title_activity_camera_landmark">CameraLandmark</string>
+
+    <string-array name="Güvenlik">
+        <item>Güvenli</item>
+        <item>Orta Seviyede Güvenli</item>
+        <item>Az Seviyede Güvenli</item>
+        <item>Güvensiz</item>
+    </string-array>
+
+    <string-array name="Etiket">
+        <item>Romantik</item>
+        <item>Arkadaş Ortamı</item>
+        <item>Aile Dostu</item>
+    </string-array>
+    <string name="title_activity_maps">MapsActivity</string>
+</resources>
