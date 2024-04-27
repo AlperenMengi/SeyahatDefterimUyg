@@ -3,31 +3,29 @@ package com.alperenmengi.seyehatdefterim.view
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.Menu
-import android.view.MenuInflater
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.alperenmengi.seyehatdefterim.Adapter.HotelAdapter
 import com.alperenmengi.seyehatdefterim.R
 import com.alperenmengi.seyehatdefterim.databinding.ActivityHotelBinding
-import com.alperenmengi.seyehatdefterim.model.HotelModel
+import com.alperenmengi.seyehatdefterim.model.PlaceModel
 
 class HotelActivity : AppCompatActivity() {
 
     private lateinit var binding : ActivityHotelBinding
-    private lateinit var hotelList : ArrayList<HotelModel>
-    private lateinit var hotel : ArrayList<HotelModel>
+    private lateinit var hotelList : ArrayList<PlaceModel>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityHotelBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
-        println("merhaba")
-        hotelList = ArrayList<HotelModel>()
 
+        hotelList = ArrayList<PlaceModel>()
+
+        //veri tabanından verileri okuma
         try{
             val database = this.openOrCreateDatabase("Places", MODE_PRIVATE, null)
             val cursor = database.rawQuery("SELECT * FROM hotel", null)
@@ -37,7 +35,7 @@ class HotelActivity : AppCompatActivity() {
             while (cursor.moveToNext()){
                 val name = cursor.getString(hotelNameIx)
                 val id = cursor.getInt(idIx)
-                val hotel = HotelModel(name, id)
+                val hotel = PlaceModel(name, id)
                 hotelList.add(hotel)
             }
             cursor.close()
@@ -53,6 +51,7 @@ class HotelActivity : AppCompatActivity() {
 
     }
 
+    //Menü işlemleri
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.hotel_menu, menu)
         return super.onCreateOptionsMenu(menu)

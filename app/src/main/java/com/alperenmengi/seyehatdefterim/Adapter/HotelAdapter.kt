@@ -1,13 +1,12 @@
 package com.alperenmengi.seyehatdefterim.Adapter
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.alperenmengi.seyehatdefterim.databinding.RecyclerRowBinding
-import com.alperenmengi.seyehatdefterim.model.HotelModel
+import com.alperenmengi.seyehatdefterim.model.PlaceModel
 
-class HotelAdapter(val hotelList : ArrayList<HotelModel>) : RecyclerView.Adapter<HotelAdapter.HotelHolder>() {
+class HotelAdapter(val hotelList : ArrayList<PlaceModel>) : RecyclerView.Adapter<HotelAdapter.HotelHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HotelHolder {
         val binding = RecyclerRowBinding.inflate(LayoutInflater.from(parent.context), parent, false)

@@ -26,16 +26,23 @@ import com.google.android.material.snackbar.Snackbar
 import java.io.ByteArrayOutputStream
 import java.util.Locale
 
+//<style name="Theme.SeyehatDefterim" parent="Base.Theme.SeyehatDefterim" />
+
 class AddActivity : AppCompatActivity() {
 
     private lateinit var binding : ActivityAddBinding
     private lateinit var tagSpinnerList : ArrayList<String>
-    private var choosenTag : String? = null
-
     private lateinit var activityResultLauncher : ActivityResultLauncher<Intent> // galeriye gitmek için kullancağız
     private lateinit var permissionLauncher: ActivityResultLauncher<String> // izini istemek için kullanacağız
+    private var place : String? = null
+    private var place2 : String? = null
+    private var selectedLatitude : String? = null
+    private var selectedLongitude : String? = null
     private var selectedBitmap : Bitmap? = null
-    private lateinit var place : String
+    private var choosenTag : String? = null
+    private var isLocationChoosed : Boolean? = null
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAddBinding.inflate(layoutInflater)
@@ -46,18 +53,24 @@ class AddActivity : AppCompatActivity() {
         fillSecuritySpinner() // Güvenlik Listesi dolduruldu
         registerLauncher()
 
-        place = intent.getStringExtra("place").toString()
+        place = intent.getStringExtra("place").toString() // Hotel, Museum, Travel'den gelen intent
+        place2 = intent.getStringExtra("place2") // MapsActivity'den gelen intent
+        println("Mapsten gelen place: " + place2)
         //Toast.makeText(this, place.toUpperCase(Locale("tr")), Toast.LENGTH_LONG ).show()
+        selectedLatitude = intent.getStringExtra("latitude")
+        selectedLongitude = intent.getStringExtra("longitude")
+        isLocationChoosed = intent.getBooleanExtra("isChoosed", false)
+
+        if (isLocationChoosed!!){
+            binding.locationButton.text = "Konum Seçildi"
+            binding.locationButton.isEnabled = false
+        }
 
 
-/*
-        tagSpinnerList = ArrayList()
-        tagSpinnerList.let {
-            Toast.makeText(this, "spinner boş değil", Toast.LENGTH_SHORT).show()
-        }*/
+        println("latitude: " + selectedLatitude +  ", longitude: " + selectedLongitude)
+
 
     }
-    //<style name="Theme.SeyehatDefterim" parent="Base.Theme.SeyehatDefterim" />
 
     fun kaydet(view: View) {
 
@@ -65,8 +78,8 @@ class AddActivity : AppCompatActivity() {
         val placeTag = binding.tagSpinner.selectedItem.toString()
         val placeSecurity = binding.securitySpinner.selectedItem.toString()
         val placeDescription = binding.descriptionText.text.toString()
-        //val placeLatitude
-        //val placeLongitude
+        val placeLatitude = selectedLatitude
+        val placeLongitude = selectedLongitude
         //Toast.makeText(this, " ${placeName} - " + "${placeTag} - " + "${placeSecurity} - " + "${placeDescription}", Toast.LENGTH_LONG).show()
         if (selectedBitmap != null){
 
@@ -76,70 +89,68 @@ class AddActivity : AppCompatActivity() {
 
             // veri tabanı işlemleri try-catch içinde
             try {
-                Toast.makeText(this, place, Toast.LENGTH_LONG).show()
+                Toast.makeText(this, place2, Toast.LENGTH_LONG).show()
                 val database = this.openOrCreateDatabase("Places", MODE_PRIVATE, null)
-                if (place == "hotel"){
+                if (place == "hotel" || place2 == "hotel"){
                     database.execSQL("CREATE TABLE IF NOT EXISTS hotel (id INTEGER PRIMARY KEY, hotelName VARCHAR, tag VARCHAR, security VARCHAR, description VARCHAR, latitude VARCHAR, longitude VARCHAR , image BLOB)")
-                    val sqlString = "INSERT INTO hotel (hotelName, tag, security, description, image) VALUES (?, ?, ?, ?, ?)"
+                    val sqlString = "INSERT INTO hotel (hotelName, tag, security, description, latitude, longitude, image) VALUES (?, ?, ?, ?, ?, ?, ?)"
                     val statement = database.compileStatement(sqlString)
                     statement.bindString(1, placeName)
                     statement.bindString(2, placeTag)
                     statement.bindString(3, placeSecurity)
                     statement.bindString(4, placeDescription)
-                    //statement.bindString(4, placeLatitude)
-                    //statement.bindString(4, placeLongitude)
-                    statement.bindBlob(5, byteArray)
+                    statement.bindString(5, placeLatitude)
+                    statement.bindString(6, placeLongitude)
+                    statement.bindBlob(7, byteArray)
                     statement.execute()
 
                 }
-                if(place == "museum"){
+                if(place == "museum" || place2 == "museum"){
                    database.execSQL("CREATE TABLE IF NOT EXISTS museum (id INTEGER PRIMARY KEY, museumName VARCHAR, tag VARCHAR, security VARCHAR, description VARCHAR, latitude VARCHAR, longitude VARCHAR, image BLOB)")
-                    val sqlString = "INSERT INTO museum (museumName, tag, security, description, image) VALUES (?, ?, ?, ?, ?)"
+                    val sqlString = "INSERT INTO museum (museumName, tag, security, description, latitude, longitude, image) VALUES (?, ?, ?, ?, ?, ?, ?)"
                     val statement = database.compileStatement(sqlString)
                     statement.bindString(1, placeName)
                     statement.bindString(2, placeTag)
                     statement.bindString(3, placeSecurity)
                     statement.bindString(4, placeDescription)
-                    //statement.bindString(4, placeLatitude)
-                    //statement.bindString(4, placeLongitude)
-                    statement.bindBlob(5, byteArray)
+                    statement.bindString(5, placeLatitude)
+                    statement.bindString(6, placeLongitude)
+                    statement.bindBlob(7, byteArray)
                     statement.execute()
 
                 }
-                if(place == "travel"){
+                if(place == "travel" || place2 == "travel"){
                     database.execSQL("CREATE TABLE IF NOT EXISTS travel (id INTEGER PRIMARY KEY, travelName VARCHAR, tag VARCHAR, security VARCHAR, description VARCHAR, latitude VARCHAR, longitude VARCHAR, image BLOB)")
-                    val sqlString = "INSERT INTO travel (travelName, tag, security, description, image) VALUES (?, ?, ?, ?, ?)"
+                    val sqlString = "INSERT INTO travel (travelName, tag, security, description, latitude, longitude, image) VALUES (?, ?, ?, ?, ?, ?, ?)"
                     val statement = database.compileStatement(sqlString)
                     statement.bindString(1, placeName)
                     statement.bindString(2, placeTag)
                     statement.bindString(3, placeSecurity)
                     statement.bindString(4, placeDescription)
-                    //statement.bindString(4, placeLatitude)
-                    //statement.bindString(4, placeLongitude)
-                    statement.bindBlob(5, byteArray)
+                    statement.bindString(5, placeLatitude)
+                    statement.bindString(6, placeLongitude)
+                    statement.bindBlob(7, byteArray)
                     statement.execute()
                 }
 
             }catch (e : Exception){
                 e.printStackTrace()
             }
-            if (place == "hotel"){
+            if (place == "hotel" || place2 == "hotel"){
                 val intent = Intent(this@AddActivity, HotelActivity::class.java)
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 startActivity(intent)
             }
-            if (place == "museum"){
+            if (place == "museum" || place2 == "museum"){
                 val intent = Intent(this@AddActivity, MuseumActivity::class.java)
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 startActivity(intent)
             }
-            if (place == "travel"){
+            if (place == "travel" || place2 == "travel"){
                 val intent = Intent(this@AddActivity, TravelActivity::class.java)
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 startActivity(intent)
             }
-
-
         }
     }
 
@@ -265,7 +276,6 @@ class AddActivity : AppCompatActivity() {
                 }
             }
         }
-
     }
 
     fun fillSecuritySpinner(){
@@ -278,6 +288,8 @@ class AddActivity : AppCompatActivity() {
 
     fun goToMaps(view: View) {
         val intent = Intent(this@AddActivity, MapsActivity::class.java)
+        intent.putExtra("place", place)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         startActivity(intent)
     }
 }
