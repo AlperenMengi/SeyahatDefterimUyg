@@ -39,11 +39,15 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapLon
     private lateinit var sharedPreferences: SharedPreferences
     private var selectedLatitude : Double? = null
     private var selectedLongitude : Double? = null
+    private var latitudeFromSavedPlace : String? = null
+    private var longitudeFromSavedPlace : String? = null
+    private var nameFromSavedPlace : String? = null
     private var trackBoolean : Boolean? = null
     private var place : String? = null
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         binding = ActivityMapsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -54,6 +58,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapLon
 
         place = intent.getStringExtra("place")
 
+
         registerLauncher()
 
         selectedLatitude = 0.0
@@ -61,13 +66,16 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapLon
         sharedPreferences = this.getSharedPreferences("com.alperenmengi.seyehatdefterim.view", MODE_PRIVATE)
         trackBoolean = false// uygulama ilk açıldığında daha öncesinde kayıtlı bir konum olup olmadığı kontrolü
 
+
+
+
     }
 
     fun sendChoosenLocationToTheAddActivity(view : View){
         val intent = Intent(this@MapsActivity, AddActivity::class.java)
         intent.putExtra("latitude", selectedLatitude.toString())
         intent.putExtra("longitude", selectedLongitude.toString())
-        intent.putExtra("isChoosed", true)
+        intent.putExtra("isChoosed", true) // ilgili yerin seçildiğine işaret eden key
         intent.putExtra("place2", place)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         startActivity(intent)
@@ -77,43 +85,70 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapLon
         mMap = googleMap
         mMap.setOnMapLongClickListener(this) // harita ve listener arasında bağlantı kurabilmek için buradaki işlemi gerçekteştiriyoruz.
 
-        locationManager = this.getSystemService(LOCATION_SERVICE) as LocationManager
-        locationListener = object : LocationListener{
-            override fun onLocationChanged(location: Location) {
-                location.let {
-                    trackBoolean = sharedPreferences.getBoolean("trackBoolean", false)
-                    if (!trackBoolean!!){ // false ise bir öncesinde kayıtlı konum yoktur, konumu alıp true yapıyoruz.
-                        val userLocation = LatLng(selectedLatitude!!, selectedLongitude!!)
-                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 15f))
-                        sharedPreferences.edit().putBoolean("trackBoolean", true).apply()
+        val intent = intent
+        val info = intent.getStringExtra("info")
+
+        if (info == "new"){
+            locationManager = this.getSystemService(LOCATION_SERVICE) as LocationManager
+            locationListener = object : LocationListener{
+                override fun onLocationChanged(location: Location) {
+                    location.let {
+                        trackBoolean = sharedPreferences.getBoolean("trackBoolean", false)
+                        if (!trackBoolean!!){ // false ise bir öncesinde kayıtlı konum yoktur, konumu alıp true yapıyoruz.
+                            val userLocation = LatLng(selectedLatitude!!, selectedLongitude!!)
+                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 15f))
+                            sharedPreferences.edit().putBoolean("trackBoolean", true).apply()
+                        }
                     }
                 }
             }
+
+            //Konum izni alma
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+                if (ActivityCompat.shouldShowRequestPermissionRationale(this@MapsActivity, Manifest.permission.ACCESS_FINE_LOCATION)){
+                    Snackbar.make(binding.root, "Konum İzni Gerekli", Snackbar.LENGTH_INDEFINITE).setAction("İzin Ver", object : OnClickListener{
+                        override fun onClick(v: View?) {
+                            // izin iste
+                            permissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+                        }
+                    }).show()
+                }else{
+                    // izin iste
+                    permissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+                }
+            }else{
+                // konum bilgilerini al
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0f, locationListener)
+                val lastLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+                if (lastLocation != null){
+                    val lastUserLocation = LatLng(lastLocation.latitude, lastLocation.longitude)
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(lastUserLocation, 15f))
+                }
+                mMap.isMyLocationEnabled = true // konum etkinleştirildi mi?, izni aldığımız için evet diyebiliyoruz.
+            }
+
+        }else if (info == "old") {
+            mMap.clear()
+
+            latitudeFromSavedPlace = intent.getStringExtra("savedLatitude")
+            longitudeFromSavedPlace = intent.getStringExtra("savedLongitude")
+            nameFromSavedPlace = intent.getStringExtra("savedPlaceName")
+
+            binding.selectLocation.visibility = View.GONE
+
+            if (latitudeFromSavedPlace != null && longitudeFromSavedPlace != null) {
+                val savedLocation = LatLng(
+                    latitudeFromSavedPlace!!.toDouble(),
+                    longitudeFromSavedPlace!!.toDouble()
+                )
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(savedLocation, 15f))
+                mMap.addMarker(MarkerOptions().position(savedLocation).title(nameFromSavedPlace.toString()))
+
+
+            }
         }
 
-        //Konum izni alma
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this@MapsActivity, Manifest.permission.ACCESS_FINE_LOCATION)){
-                Snackbar.make(binding.root, "Konum İzni Gerekli", Snackbar.LENGTH_INDEFINITE).setAction("İzin Ver", object : OnClickListener{
-                    override fun onClick(v: View?) {
-                        // izin iste
-                        permissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
-                    }
-                }).show()
-            }else{
-                // izin iste
-                permissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
-            }
-        }else{
-            // konum bilgilerini al
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0f, locationListener)
-            val lastLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
-            if (lastLocation != null){
-                val lastUserLocation = LatLng(lastLocation.latitude, lastLocation.longitude)
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(lastUserLocation, 15f))
-            }
-            mMap.isMyLocationEnabled = true // konum etkinleştirildi mi?, izni aldığımız için evet diyebiliyoruz.
-        }
+
     }
 
     fun registerLauncher(){

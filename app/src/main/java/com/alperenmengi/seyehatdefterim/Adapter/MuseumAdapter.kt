@@ -4,9 +4,10 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.alperenmengi.seyehatdefterim.databinding.RecyclerRowBinding
+import com.alperenmengi.seyehatdefterim.model.Museum
 import com.alperenmengi.seyehatdefterim.model.PlaceModel
 
-class MuseumAdapter(val museumList : ArrayList<PlaceModel>) : RecyclerView.Adapter<MuseumAdapter.MuseumHolder>() {
+class MuseumAdapter(val museumList : ArrayList<Museum>) : RecyclerView.Adapter<MuseumAdapter.MuseumHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MuseumHolder {
         val binding = RecyclerRowBinding.inflate(LayoutInflater.from(parent.context), parent, false)

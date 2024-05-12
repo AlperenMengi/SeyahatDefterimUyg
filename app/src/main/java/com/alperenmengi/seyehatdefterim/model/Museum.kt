@@ -6,7 +6,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity
-data class PlaceModel (
+data class Museum (
 
     @ColumnInfo(name = "name")
     val name : String,

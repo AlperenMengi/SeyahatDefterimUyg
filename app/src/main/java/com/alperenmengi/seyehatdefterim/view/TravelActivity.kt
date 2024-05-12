@@ -25,7 +25,7 @@ class TravelActivity : AppCompatActivity() {
         travelList = ArrayList<PlaceModel>()
 
         //veri tabanından verileri okuma
-        try{
+        /*try{
             val database = this.openOrCreateDatabase("Places", MODE_PRIVATE, null)
             val cursor = database.rawQuery("SELECT * FROM travel", null)
             val hotelNameIx = cursor.getColumnIndex("travelName")
@@ -41,11 +41,11 @@ class TravelActivity : AppCompatActivity() {
 
         }catch(e : Exception){
             e.printStackTrace()
-        }
+        }*/
 
         binding.recyclerViewTravel.layoutManager = LinearLayoutManager(this@TravelActivity)
-        val travelAdapter = TravelAdapter(travelList)
-        binding.recyclerViewTravel.adapter = travelAdapter
+        /*val travelAdapter = TravelAdapter(travelList)
+        binding.recyclerViewTravel.adapter = travelAdapter*/
     }
 
     //Menü işlemleri

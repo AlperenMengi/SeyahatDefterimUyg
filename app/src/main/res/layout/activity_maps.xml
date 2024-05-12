@@ -11,11 +11,15 @@
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="745dp"
+        map:layout_constraintBottom_toTopOf="@+id/selectLocation"
+        map:layout_constraintEnd_toEndOf="parent"
+        map:layout_constraintStart_toStartOf="parent"
+        map:layout_constraintTop_toTopOf="parent"
         tools:context=".view.MapsActivity"
         tools:ignore="MissingConstraints" />
 
     <Button
-        android:id="@+id/button2"
+        android:id="@+id/selectLocation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Konumu Seç"

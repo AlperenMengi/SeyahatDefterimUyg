@@ -6,7 +6,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity
-data class PlaceModel (
+data class Hotel (
 
     @ColumnInfo(name = "name")
     val name : String,
@@ -21,10 +21,10 @@ data class PlaceModel (
     val description : String,
 
     @ColumnInfo(name = "latitude")
-    val latitude : String,
+    val latitude : String?,
 
     @ColumnInfo(name = "longitude")
-    val longitude : String,
+    val longitude : String?,
 
     @ColumnInfo(name = "image")
     val image : ByteArray) {
