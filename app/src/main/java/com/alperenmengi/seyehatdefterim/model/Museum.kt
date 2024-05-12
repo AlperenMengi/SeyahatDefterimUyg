@@ -21,10 +21,10 @@ data class Museum (
     val description : String,
 
     @ColumnInfo(name = "latitude")
-    val latitude : String,
+    val latitude : String?,
 
     @ColumnInfo(name = "longitude")
-    val longitude : String,
+    val longitude : String?,
 
     @ColumnInfo(name = "image")
     val image : ByteArray) {

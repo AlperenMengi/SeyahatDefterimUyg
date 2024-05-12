@@ -29,6 +29,9 @@ interface PlaceDao {
     @Query("SELECT * FROM Museum")
     fun getAllMuseums() : List<Museum>
 
+    @Query("SELECT * FROM Museum where id = :selectedId")
+    fun getSelectedMuseum(selectedId: Int): List<Museum>
+
     @Insert
     fun insertMuseum(museum : Museum)
 
@@ -38,6 +41,9 @@ interface PlaceDao {
     //Travel
     @Query("SELECT * FROM Travel")
     fun getAllTravels() : List<Travel>
+
+    @Query("SELECT * FROM Travel where id = :selectedId")
+    fun getSelectedTravel(selectedId: Int): List<Travel>
 
     @Insert
     fun insertTravel(travel : Travel)

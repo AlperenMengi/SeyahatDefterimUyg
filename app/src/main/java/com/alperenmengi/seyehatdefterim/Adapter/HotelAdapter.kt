@@ -24,7 +24,6 @@ class HotelAdapter(val hotelList : ArrayList<Hotel>) : RecyclerView.Adapter<Hote
         holder.binding.nameText.text = hotelList.get(position).name
         holder.itemView.setOnClickListener(){
             // basılınca yine AddActivity'e gidilecek
-            // bir intent ile kullanıcının seçtiği bilgilerin gönderilmesi gerekli.
             val intent = Intent(holder.itemView.context, AddActivity::class.java)
             intent.putExtra("place", "HotelDetails")
             intent.putExtra("id", hotelList.get(position).id)//seçilen yerin idsi

@@ -26,6 +26,8 @@ import androidx.room.Room
 import com.alperenmengi.seyehatdefterim.R
 import com.alperenmengi.seyehatdefterim.databinding.ActivityAddBinding
 import com.alperenmengi.seyehatdefterim.model.Hotel
+import com.alperenmengi.seyehatdefterim.model.Museum
+import com.alperenmengi.seyehatdefterim.model.Travel
 import com.alperenmengi.seyehatdefterim.roomdb.PlaceDao
 import com.alperenmengi.seyehatdefterim.roomdb.PlaceDatabase
 import com.google.android.material.snackbar.Snackbar
@@ -37,7 +39,6 @@ import java.util.Locale
 class AddActivity : AppCompatActivity() {
 
     private lateinit var binding : ActivityAddBinding
-    private var tagSpinnerList : ArrayList<String>? = null
     private lateinit var activityResultLauncher : ActivityResultLauncher<Intent> // galeriye gitmek için kullancağız
     private lateinit var permissionLauncher: ActivityResultLauncher<String> // izini istemek için kullanacağız
     private var place : String? = null
@@ -48,9 +49,17 @@ class AddActivity : AppCompatActivity() {
     private var choosenTag : String? = null
     private var isLocationChoosed : Boolean? = null
     private lateinit var hotelList : List<Hotel>
+    private lateinit var museumList : List<Museum>
+    private lateinit var travelList : List<Travel>
     private lateinit var selectedHotel : Hotel
+    private lateinit var selectedMuseum : Museum
+    private lateinit var selectedTravel : Travel
     private var hotelLatitude : String? = null
     private var hotelLongitude : String? = null
+    private var museumLatitude : String? = null
+    private var museumLongitude : String? = null
+    private var travelLatitude : String? = null
+    private var travelLongitude : String? = null
 
     //database işlemleri için
     private lateinit var db : PlaceDatabase
@@ -69,7 +78,7 @@ class AddActivity : AppCompatActivity() {
 
         db = Room.databaseBuilder(
             applicationContext,
-            PlaceDatabase::class.java, "Destinations"
+            PlaceDatabase::class.java, "PlacesV2"
         ).allowMainThreadQueries().build()
 
         placeDao = db.placeDao()
@@ -148,6 +157,109 @@ class AddActivity : AppCompatActivity() {
                 }
             }
             hotelList = placeDao.getAllHotels()
+
+        } else if (place == "MuseumDetails"){ // Listedeki herhangi bir elemana tıklayınca burası çalışacak
+            val intent = intent
+            val id = intent.getIntExtra("id", -1)
+            if (id != -1){
+                val museum = placeDao.getSelectedMuseum(id)
+                selectedMuseum = museum[0]
+
+                selectedMuseum.let {
+                    val byteArray = selectedMuseum.image
+                    val bitmap = BitmapFactory.decodeByteArray(byteArray, 0 , byteArray.size)
+
+                    // image ve text ve spinnerlerin set edilmesi
+                    binding.imageView.setImageBitmap(bitmap)
+                    binding.nameText.setText(selectedMuseum.name)
+                    binding.descriptionText.setText(selectedMuseum.description)
+                    binding.locationButton.text = "Konuma Git"
+
+                    //EN SON SPİNNERE ELEMAN ATIYODUM GEMİNİ DEN YARDIM ALDIM
+                    val securityData = arrayOf(selectedMuseum.security)
+                    val securityAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, securityData)
+                    binding.securitySpinner.adapter = securityAdapter
+
+                    val tagData = arrayOf(selectedMuseum.tag)
+                    val tagAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, tagData)
+                    binding.tagSpinner.adapter = tagAdapter
+
+                    //Kullanıcı seçtiği şeyleri bir daha değiştiremeyeceği için düzenleme haklarını kaldırıyoruz.
+                    binding.nameText.isEnabled = false
+                    binding.descriptionText.isEnabled = false
+                    binding.securitySpinner.isEnabled = false
+                    binding.tagSpinner.isEnabled = false
+                    binding.imageView.isClickable = false
+                    binding.saveButton.visibility = View.INVISIBLE
+
+                    //enlem ve boylamı alabiliyorum
+                    museumLatitude = selectedMuseum.latitude
+                    museumLongitude = selectedMuseum.longitude
+                    println("detay içinde adde gelince " + museumLatitude)
+                    println("detay içinde adde gelince " + museumLongitude)
+
+                    binding.locationButton.setOnClickListener(){
+                        val intent = Intent(this@AddActivity, MapsActivity::class.java)
+                        intent.putExtra("savedLatitude", museumLatitude)
+                        intent.putExtra("savedLongitude", museumLongitude)
+                        intent.putExtra("savedPlaceName", selectedMuseum.name)
+                        intent.putExtra("info", "old")
+                        startActivity(intent)
+                    }
+                }
+            }
+            museumList = placeDao.getAllMuseums()
+        }else if (place == "TravelDetails"){ // Listedeki herhangi bir elemana tıklayınca burası çalışacak
+            val intent = intent
+            val id = intent.getIntExtra("id", -1)
+            if (id != -1){
+                val travel = placeDao.getSelectedTravel(id)
+                selectedTravel = travel[0]
+
+                selectedTravel.let {
+                    val byteArray = selectedTravel.image
+                    val bitmap = BitmapFactory.decodeByteArray(byteArray, 0 , byteArray.size)
+
+                    // image ve text ve spinnerlerin set edilmesi
+                    binding.imageView.setImageBitmap(bitmap)
+                    binding.nameText.setText(selectedTravel.name)
+                    binding.descriptionText.setText(selectedTravel.description)
+                    binding.locationButton.text = "Konuma Git"
+
+                    //EN SON SPİNNERE ELEMAN ATIYODUM GEMİNİ DEN YARDIM ALDIM
+                    val securityData = arrayOf(selectedTravel.security)
+                    val securityAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, securityData)
+                    binding.securitySpinner.adapter = securityAdapter
+
+                    val tagData = arrayOf(selectedTravel.tag)
+                    val tagAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, tagData)
+                    binding.tagSpinner.adapter = tagAdapter
+
+                    //Kullanıcı seçtiği şeyleri bir daha değiştiremeyeceği için düzenleme haklarını kaldırıyoruz.
+                    binding.nameText.isEnabled = false
+                    binding.descriptionText.isEnabled = false
+                    binding.securitySpinner.isEnabled = false
+                    binding.tagSpinner.isEnabled = false
+                    binding.imageView.isClickable = false
+                    binding.saveButton.visibility = View.INVISIBLE
+
+                    //enlem ve boylamı alabiliyorum
+                    travelLatitude = selectedTravel.latitude
+                    travelLongitude = selectedTravel.longitude
+                    println("detay içinde adde gelince " + travelLatitude)
+                    println("detay içinde adde gelince " + travelLongitude)
+
+                    binding.locationButton.setOnClickListener(){
+                        val intent = Intent(this@AddActivity, MapsActivity::class.java)
+                        intent.putExtra("savedLatitude", travelLatitude)
+                        intent.putExtra("savedLongitude", travelLongitude)
+                        intent.putExtra("savedPlaceName", selectedTravel.name)
+                        intent.putExtra("info", "old")
+                        startActivity(intent)
+                    }
+                }
+            }
+            travelList = placeDao.getAllTravels()
         }
     }
 
@@ -172,14 +284,9 @@ class AddActivity : AppCompatActivity() {
 
             // veri tabanı işlemleri try-catch içinde
             try {
-
                 Toast.makeText(this, place, Toast.LENGTH_LONG).show()
                 //val database = this.openOrCreateDatabase("Places", MODE_PRIVATE, null)
                 if (place == "hotel" || place2 == "hotel"){
-                    Toast.makeText(this, place, Toast.LENGTH_LONG).show()
-                    Toast.makeText(this, place2, Toast.LENGTH_LONG).show()
-
-
                     val hotel = Hotel(placeName, placeTag, placeSecurity, placeDescription, placeLatitude, placeLongitude, byteArray)
                     placeDao.insertHotel(hotel)
 
@@ -197,33 +304,16 @@ class AddActivity : AppCompatActivity() {
                     statement.execute()*/
 
                 }
-                /* if(place == "museum" || place2 == "museum"){
-                    database.execSQL("CREATE TABLE IF NOT EXISTS museum (id INTEGER PRIMARY KEY, museumName VARCHAR, tag VARCHAR, security VARCHAR, description VARCHAR, latitude VARCHAR, longitude VARCHAR, image BLOB)")
-                     val sqlString = "INSERT INTO museum (museumName, tag, security, description, latitude, longitude, image) VALUES (?, ?, ?, ?, ?, ?, ?)"
-                     val statement = database.compileStatement(sqlString)
-                     statement.bindString(1, placeName)
-                     statement.bindString(2, placeTag)
-                     statement.bindString(3, placeSecurity)
-                     statement.bindString(4, placeDescription)
-                     statement.bindString(5, placeLatitude)
-                     statement.bindString(6, placeLongitude)
-                     statement.bindBlob(7, byteArray)
-                     statement.execute()
+                if(place == "museum" || place2 == "museum"){
+                    val museum = Museum(placeName, placeTag, placeSecurity, placeDescription, placeLatitude, placeLongitude, byteArray)
+                    placeDao.insertMuseum(museum)
 
                  }
                  if(place == "travel" || place2 == "travel"){
-                     database.execSQL("CREATE TABLE IF NOT EXISTS travel (id INTEGER PRIMARY KEY, travelName VARCHAR, tag VARCHAR, security VARCHAR, description VARCHAR, latitude VARCHAR, longitude VARCHAR, image BLOB)")
-                     val sqlString = "INSERT INTO travel (travelName, tag, security, description, latitude, longitude, image) VALUES (?, ?, ?, ?, ?, ?, ?)"
-                     val statement = database.compileStatement(sqlString)
-                     statement.bindString(1, placeName)
-                     statement.bindString(2, placeTag)
-                     statement.bindString(3, placeSecurity)
-                     statement.bindString(4, placeDescription)
-                     statement.bindString(5, placeLatitude)
-                     statement.bindString(6, placeLongitude)
-                     statement.bindBlob(7, byteArray)
-                     statement.execute()
-                 }*/
+                     val travel = Travel(placeName, placeTag, placeSecurity, placeDescription, placeLatitude, placeLongitude, byteArray)
+                     placeDao.insertTravel(travel)
+
+                 }
 
             }catch (e : Exception){
                 e.printStackTrace()

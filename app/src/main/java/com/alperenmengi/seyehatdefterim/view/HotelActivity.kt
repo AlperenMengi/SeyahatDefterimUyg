@@ -37,7 +37,7 @@ class HotelActivity : AppCompatActivity() {
 
         db = Room.databaseBuilder(
             applicationContext,
-            PlaceDatabase::class.java, "Destinations"
+            PlaceDatabase::class.java, "PlacesV2"
         ).allowMainThreadQueries().build()
 
         placeDao = db.placeDao()

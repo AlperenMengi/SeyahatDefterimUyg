@@ -143,12 +143,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapLon
                 )
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(savedLocation, 15f))
                 mMap.addMarker(MarkerOptions().position(savedLocation).title(nameFromSavedPlace.toString()))
-
-
             }
         }
-
-
     }
 
     fun registerLauncher(){
