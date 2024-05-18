@@ -19,7 +19,6 @@ class MainActivity : AppCompatActivity() {
 
         buttonAnimation() // anasayfadaki butonları tıklayınca büyütüyor
 
-
         binding.hotel.setOnClickListener(){
             intent = Intent(this@MainActivity, HotelActivity::class.java)
             startActivity(intent)
@@ -37,10 +36,9 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
         binding.place.setOnClickListener(){
-            intent = Intent(this@MainActivity, AIActivity::class.java)
+            intent = Intent(this@MainActivity, FindLandmarksWithAIActivity::class.java)
             startActivity(intent)
         }
-
     }
 
 

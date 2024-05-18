@@ -3,7 +3,6 @@ package com.alperenmengi.seyehatdefterim.view
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -12,9 +11,7 @@ import com.alperenmengi.seyehatdefterim.Adapter.HotelAdapter
 import com.alperenmengi.seyehatdefterim.Adapter.MuseumAdapter
 import com.alperenmengi.seyehatdefterim.R
 import com.alperenmengi.seyehatdefterim.databinding.ActivityMuseumBinding
-import com.alperenmengi.seyehatdefterim.model.Hotel
 import com.alperenmengi.seyehatdefterim.model.Museum
-import com.alperenmengi.seyehatdefterim.model.PlaceModel
 import com.alperenmengi.seyehatdefterim.roomdb.PlaceDao
 import com.alperenmengi.seyehatdefterim.roomdb.PlaceDatabase
 

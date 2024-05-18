@@ -6,7 +6,6 @@ import androidx.room.Insert
 import androidx.room.Query
 import com.alperenmengi.seyehatdefterim.model.Hotel
 import com.alperenmengi.seyehatdefterim.model.Museum
-import com.alperenmengi.seyehatdefterim.model.PlaceModel
 import com.alperenmengi.seyehatdefterim.model.Travel
 
 @Dao

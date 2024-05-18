@@ -7,12 +7,9 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.room.Room
-import com.alperenmengi.seyehatdefterim.Adapter.HotelAdapter
 import com.alperenmengi.seyehatdefterim.Adapter.TravelAdapter
 import com.alperenmengi.seyehatdefterim.R
 import com.alperenmengi.seyehatdefterim.databinding.ActivityTravelBinding
-import com.alperenmengi.seyehatdefterim.model.Hotel
-import com.alperenmengi.seyehatdefterim.model.PlaceModel
 import com.alperenmengi.seyehatdefterim.model.Travel
 import com.alperenmengi.seyehatdefterim.roomdb.PlaceDao
 import com.alperenmengi.seyehatdefterim.roomdb.PlaceDatabase

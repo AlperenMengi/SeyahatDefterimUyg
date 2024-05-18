@@ -6,7 +6,6 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.alperenmengi.seyehatdefterim.databinding.RecyclerRowBinding
 import com.alperenmengi.seyehatdefterim.model.Hotel
-import com.alperenmengi.seyehatdefterim.model.PlaceModel
 import com.alperenmengi.seyehatdefterim.view.AddActivity
 
 class HotelAdapter(val hotelList : ArrayList<Hotel>) : RecyclerView.Adapter<HotelAdapter.HotelHolder>() {

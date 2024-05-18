@@ -1,19 +1,16 @@
 package com.alperenmengi.seyehatdefterim.view
 
 import android.content.Intent
-import android.database.Cursor
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.room.Room
 import com.alperenmengi.seyehatdefterim.Adapter.HotelAdapter
 import com.alperenmengi.seyehatdefterim.R
 import com.alperenmengi.seyehatdefterim.databinding.ActivityHotelBinding
 import com.alperenmengi.seyehatdefterim.model.Hotel
-import com.alperenmengi.seyehatdefterim.model.PlaceModel
 import com.alperenmengi.seyehatdefterim.roomdb.PlaceDao
 import com.alperenmengi.seyehatdefterim.roomdb.PlaceDatabase
 

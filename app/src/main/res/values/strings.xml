@@ -15,4 +15,6 @@
         <item>Aile Dostu</item>
     </string-array>
     <string name="title_activity_maps">MapsActivity</string>
+    <string name="title_activity_find_landmarks_with_aiactivity">FindLandmarksWithAIActivity
+    </string>
 </resources>

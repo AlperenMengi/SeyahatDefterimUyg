@@ -6,7 +6,6 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.alperenmengi.seyehatdefterim.databinding.RecyclerRowBinding
 import com.alperenmengi.seyehatdefterim.model.Museum
-import com.alperenmengi.seyehatdefterim.model.PlaceModel
 import com.alperenmengi.seyehatdefterim.view.AddActivity
 
 class MuseumAdapter(val museumList : ArrayList<Museum>) : RecyclerView.Adapter<MuseumAdapter.MuseumHolder>() {
