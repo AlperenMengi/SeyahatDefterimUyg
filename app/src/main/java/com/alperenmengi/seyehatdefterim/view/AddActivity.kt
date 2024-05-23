@@ -1,7 +1,10 @@
 package com.alperenmengi.seyehatdefterim.view
 
 import android.Manifest
+import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -9,17 +12,15 @@ import android.graphics.ImageDecoder
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.PersistableBundle
 import android.provider.MediaStore
-import android.text.Editable
 import android.view.View
-import android.view.View.OnClickListener
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.material3.Snackbar
-import androidx.compose.ui.text.toUpperCase
+import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.room.Room
@@ -32,7 +33,6 @@ import com.alperenmengi.seyehatdefterim.roomdb.PlaceDao
 import com.alperenmengi.seyehatdefterim.roomdb.PlaceDatabase
 import com.google.android.material.snackbar.Snackbar
 import java.io.ByteArrayOutputStream
-import java.util.Locale
 
 //<style name="Theme.SeyehatDefterim" parent="Base.Theme.SeyehatDefterim" />
 
@@ -41,6 +41,15 @@ class AddActivity : AppCompatActivity() {
     private lateinit var binding : ActivityAddBinding
     private lateinit var activityResultLauncher : ActivityResultLauncher<Intent> // galeriye gitmek için kullancağız
     private lateinit var permissionLauncher: ActivityResultLauncher<String> // izini istemek için kullanacağız
+    private lateinit var hotelList : List<Hotel>
+    private lateinit var museumList : List<Museum>
+    private lateinit var travelList : List<Travel>
+    private lateinit var selectedHotel : Hotel
+    private lateinit var selectedMuseum : Museum
+    private lateinit var selectedTravel : Travel
+    //database işlemleri için
+    private lateinit var db : PlaceDatabase
+    private lateinit var placeDao : PlaceDao
     private var place : String? = null
     private var place2 : String? = null
     private var selectedLatitude : String? = null
@@ -48,23 +57,13 @@ class AddActivity : AppCompatActivity() {
     private var selectedBitmap : Bitmap? = null
     private var choosenTag : String? = null
     private var isLocationChoosed : Boolean? = null
-    private lateinit var hotelList : List<Hotel>
-    private lateinit var museumList : List<Museum>
-    private lateinit var travelList : List<Travel>
-    private lateinit var selectedHotel : Hotel
-    private lateinit var selectedMuseum : Museum
-    private lateinit var selectedTravel : Travel
     private var hotelLatitude : String? = null
     private var hotelLongitude : String? = null
     private var museumLatitude : String? = null
     private var museumLongitude : String? = null
     private var travelLatitude : String? = null
     private var travelLongitude : String? = null
-
-    //database işlemleri için
-    private lateinit var db : PlaceDatabase
-    private lateinit var placeDao : PlaceDao
-
+    private lateinit var sharedPreferences: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,6 +74,8 @@ class AddActivity : AppCompatActivity() {
         fillTagSpinner() // Etiket Listesi dolduruldu
         fillSecuritySpinner() // Güvenlik Listesi dolduruldu
         registerLauncher()
+
+        sharedPreferences = this.getSharedPreferences("com.alperenmengi.seyehatdefterim.view", Context.MODE_PRIVATE)
 
         db = Room.databaseBuilder(
             applicationContext,
@@ -88,13 +89,9 @@ class AddActivity : AppCompatActivity() {
         place2 = intent.getStringExtra("place2") // MapsActivity'den gelen intent
         println("Mapsten gelen place: " + place2)
 
-       /* hotelList = intent.getSerializableExtra("HotelDetails") as ArrayList<Hotel>
-
-        for(hotels in hotelList){
-            println("name : " + hotels.name)
-            println("secu : " + hotels.security)
-            println("tag : " + hotels.tag)
-        }*/
+        if (place2 == null && place != "HotelDetails" && place != "MuseumDetails" && place != "TravelDetails"){
+            selectLocationAlertDailog()
+        }
 
         //Mapstan dönen enlem, boylam ve konum seçildi bilgisi
         selectedLatitude = intent.getStringExtra("latitude")
@@ -290,19 +287,6 @@ class AddActivity : AppCompatActivity() {
                     val hotel = Hotel(placeName, placeTag, placeSecurity, placeDescription, placeLatitude, placeLongitude, byteArray)
                     placeDao.insertHotel(hotel)
 
-                    /*
-                    database.execSQL("CREATE TABLE IF NOT EXISTS hotel (id INTEGER PRIMARY KEY, hotelName VARCHAR, tag VARCHAR, security VARCHAR, description VARCHAR, latitude VARCHAR, longitude VARCHAR , image BLOB)")
-                    val sqlString = "INSERT INTO hotel (hotelName, tag, security, description, latitude, longitude, image) VALUES (?, ?, ?, ?, ?, ?, ?)"
-                    val statement = database.compileStatement(sqlString)
-                    statement.bindString(1, placeName)
-                    statement.bindString(2, placeTag)
-                    statement.bindString(3, placeSecurity)
-                    statement.bindString(4, placeDescription)
-                    statement.bindString(5, placeLatitude)
-                    statement.bindString(6, placeLongitude)
-                    statement.bindBlob(7, byteArray)
-                    statement.execute()*/
-
                 }
                 if(place == "museum" || place2 == "museum"){
                     val museum = Museum(placeName, placeTag, placeSecurity, placeDescription, placeLatitude, placeLongitude, byteArray)
@@ -471,11 +455,52 @@ class AddActivity : AppCompatActivity() {
         }
     }
 
-    fun goToMaps(view: View) {
-        val intent = Intent(this@AddActivity, MapsActivity::class.java)
-        intent.putExtra("place", place)
-        intent.putExtra("info", "new")
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-        startActivity(intent)
+    fun selectLocationAlertDailog() {
+        binding.textView4.visibility = View.GONE
+        binding.locationButton.visibility = View.GONE
+
+        val alertDialog = AlertDialog.Builder(this)
+        alertDialog.setTitle("Haritadan Konum Seçilecektir")
+        alertDialog.setIcon(R.drawable.information)
+        alertDialog.setMessage("Konum Seç'e basarak ilgili yerin konumunu haritadan seçip kaydedebilirsiniz.")
+        alertDialog.setPositiveButton("Konum Seç", object : DialogInterface.OnClickListener{
+            override fun onClick(dialog: DialogInterface?, which: Int) {
+                val intent = Intent(this@AddActivity, MapsActivity::class.java)
+                intent.putExtra("place", place)
+                intent.putExtra("info", "new")
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                startActivity(intent)
+            }
+        })
+        alertDialog.setCancelable(false)
+        alertDialog.show()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle, outPersistentState: PersistableBundle) {
+        super.onSaveInstanceState(outState, outPersistentState)
+        outState.putString("name", binding.nameText.text.toString())
+        outState.putString("description", binding.descriptionText.text.toString())
+        outState.putBoolean("hasImage", selectedBitmap != null)
+        outState.putString("tag", binding.tagSpinner.selectedItem.toString())
+        outState.putString("security", binding.securitySpinner.selectedItem.toString())
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
+        super.onRestoreInstanceState(savedInstanceState, persistentState)
+        binding.nameText.setText(savedInstanceState?.getString("name", ""))
+        binding.descriptionText.setText(savedInstanceState?.getString("description", ""))
+        // Eğer kullanıcı daha önce bir fotoğraf seçtiyse, seçilen fotoğrafı tekrar yükle
+        if (savedInstanceState!!.getBoolean("hasImage")) {
+            binding.imageView.setImageBitmap(selectedBitmap)
+        }
+
+        val tagData = arrayOf(savedInstanceState?.getString("tag"))
+        val tagAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, tagData)
+        binding.tagSpinner.adapter = tagAdapter
+
+        val securityData = arrayOf(savedInstanceState?.getString("tag"))
+        val securityAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, securityData)
+        binding.securitySpinner.adapter = securityAdapter
+
     }
 }

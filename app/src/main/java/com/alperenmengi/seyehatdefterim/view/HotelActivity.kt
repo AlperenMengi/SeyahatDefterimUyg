@@ -44,25 +44,6 @@ class HotelActivity : AppCompatActivity() {
             hotelList = placeDao.getAllHotels() as ArrayList<Hotel>
             hotelAdapter!!.notifyDataSetChanged() // veri seti değiştiği anda adaptere kendini güncelle diye haber veriyoruz.
 
-            /*val database = this.openOrCreateDatabase("Place", MODE_PRIVATE, null)
-            val cursor = database.rawQuery("SELECT * FROM hotel", null)
-            val idIx = cursor.getColumnIndex("id")
-            val hotelNameIx = cursor.getColumnIndex("hotelName")
-            val tagIx = cursor.getColumnIndex("")
-            val securityIx = cursor.getColumnIndex("id")
-            val descriptionIx = cursor.getColumnIndex("id")
-            val latitudeIx = cursor.getColumnIndex("id")
-            val longitudeIx = cursor.getColumnIndex("id")
-            val imageIx = cursor.getColumnIndex("id")
-
-            while (cursor.moveToNext()){
-                val name = cursor.getString(hotelNameIx)
-                val id = cursor.getInt(idIx)
-                val hotel = Hotel(name, id)
-                hotelList.add(hotel)
-            }
-            cursor.close()*/
-
         }catch(e : Exception){
             e.printStackTrace()
         }

@@ -3,6 +3,7 @@
     <string name="title_activity_camera_landmark">CameraLandmark</string>
 
     <string-array name="Güvenlik">
+        <item>Seçiniz</item>
         <item>Güvenli</item>
         <item>Orta Seviyede Güvenli</item>
         <item>Az Seviyede Güvenli</item>
@@ -10,6 +11,7 @@
     </string-array>
 
     <string-array name="Etiket">
+        <item>Seçiniz</item>
         <item>Romantik</item>
         <item>Arkadaş Ortamı</item>
         <item>Aile Dostu</item>

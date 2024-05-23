@@ -41,7 +41,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-
     fun buttonAnimation(){
         val buttonAnimation = AnimationUtils.loadAnimation(this, R.anim.scale_up)
         binding.hotel.setOnClickListener(){
@@ -60,26 +59,4 @@ class MainActivity : AppCompatActivity() {
             it.startAnimation(buttonAnimation)
         }
     }
-
-    /*fun chatgpt_Speechtext(view: View) {
-        intent = Intent(this@MainActivity, AskAndLearnActivity::class.java)
-        startActivity(intent)
-    }
-    fun hotels(view: View) {
-        intent = Intent(this@MainActivity, HotelActivity::class.java)
-        startActivity(intent)
-    }
-    fun museums(view: View) {
-        intent = Intent(this@MainActivity, MuseumActivity::class.java)
-        startActivity(intent)
-    }
-    fun travels(view: View) {
-        intent = Intent(this@MainActivity, TravelActivity::class.java)
-        startActivity(intent)
-    }
-    fun whereami(view: View) {
-        intent = Intent(this@MainActivity, AIActivity::class.java)
-        startActivity(intent)
-    }*/
-
 }

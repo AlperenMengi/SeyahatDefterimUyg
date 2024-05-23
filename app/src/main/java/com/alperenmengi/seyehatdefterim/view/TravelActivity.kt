@@ -44,20 +44,6 @@ class TravelActivity : AppCompatActivity() {
             travelList = placeDao.getAllTravels() as ArrayList<Travel>
             travelLAdapter!!.notifyDataSetChanged() // veri seti değiştiği anda adaptere kendini güncelle diye haber veriyoruz.
 
-
-            /*val database = this.openOrCreateDatabase("Places", MODE_PRIVATE, null)
-            val cursor = database.rawQuery("SELECT * FROM travel", null)
-            val hotelNameIx = cursor.getColumnIndex("travelName")
-            val idIx = cursor.getColumnIndex("id")
-
-            while (cursor.moveToNext()){
-                val name = cursor.getString(hotelNameIx)
-                val id = cursor.getInt(idIx)
-                val hotel = PlaceModel(name, id)
-                travelList.add(hotel)
-            }
-            cursor.close()*/
-
         }catch(e : Exception){
             e.printStackTrace()
         }
