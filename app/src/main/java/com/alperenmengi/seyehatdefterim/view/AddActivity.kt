@@ -85,9 +85,9 @@ class AddActivity : AppCompatActivity() {
         placeDao = db.placeDao()
 
         place = intent.getStringExtra("place").toString() // Hotel, Museum, Travel'den gelen intent, yer kaydetmek için
-        Toast.makeText(this, "Yer eklemek için gelindi, " + place, Toast.LENGTH_LONG).show()
+        //Toast.makeText(this, "Yer eklemek için gelindi, " + place, Toast.LENGTH_LONG).show()
         place2 = intent.getStringExtra("place2") // MapsActivity'den gelen intent
-        println("Mapsten gelen place: " + place2)
+        //println("Mapsten gelen place: " + place2)
 
         if (place2 == null && place != "HotelDetails" && place != "MuseumDetails" && place != "TravelDetails"){
             selectLocationAlertDailog()
@@ -135,7 +135,17 @@ class AddActivity : AppCompatActivity() {
                     binding.securitySpinner.isEnabled = false
                     binding.tagSpinner.isEnabled = false
                     binding.imageView.isClickable = false
-                    binding.saveButton.visibility = View.INVISIBLE
+
+                    //Kullanıcı herhangi kaydettiği bir yeri silmek istediğinde
+                    binding.saveButton.text = "Sil"
+                    binding.saveButton.setBackgroundColor(ContextCompat.getColor(this@AddActivity, R.color.red))
+                    binding.saveButton.setOnClickListener(){
+                        placeDao.deleteHotel(selectedHotel)
+                        val intent = Intent(this@AddActivity, HotelActivity::class.java)
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                        startActivity(intent)
+                        Toast.makeText(this@AddActivity, selectedHotel.name + " silindi!", Toast.LENGTH_SHORT).show()
+                    }
 
                     //enlem ve boylamı alabiliyorum
                     hotelLatitude = selectedHotel.latitude
@@ -187,7 +197,17 @@ class AddActivity : AppCompatActivity() {
                     binding.securitySpinner.isEnabled = false
                     binding.tagSpinner.isEnabled = false
                     binding.imageView.isClickable = false
-                    binding.saveButton.visibility = View.INVISIBLE
+
+                    //Kullanıcı herhangi kaydettiği bir yeri silmek istediğinde
+                    binding.saveButton.text = "Sil"
+                    binding.saveButton.setBackgroundColor(ContextCompat.getColor(this@AddActivity, R.color.red))
+                    binding.saveButton.setOnClickListener(){
+                        placeDao.deleteMuseum(selectedMuseum)
+                        val intent = Intent(this@AddActivity, MuseumActivity::class.java)
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                        startActivity(intent)
+                        Toast.makeText(this@AddActivity, selectedMuseum.name + " silindi!", Toast.LENGTH_SHORT).show()
+                    }
 
                     //enlem ve boylamı alabiliyorum
                     museumLatitude = selectedMuseum.latitude
@@ -206,6 +226,7 @@ class AddActivity : AppCompatActivity() {
                 }
             }
             museumList = placeDao.getAllMuseums()
+
         }else if (place == "TravelDetails"){ // Listedeki herhangi bir elemana tıklayınca burası çalışacak
             val intent = intent
             val id = intent.getIntExtra("id", -1)
@@ -238,7 +259,17 @@ class AddActivity : AppCompatActivity() {
                     binding.securitySpinner.isEnabled = false
                     binding.tagSpinner.isEnabled = false
                     binding.imageView.isClickable = false
-                    binding.saveButton.visibility = View.INVISIBLE
+
+                    //Kullanıcı herhangi kaydettiği bir yeri silmek istediğinde
+                    binding.saveButton.text = "Sil"
+                    binding.saveButton.setBackgroundColor(ContextCompat.getColor(this@AddActivity, R.color.red))
+                    binding.saveButton.setOnClickListener(){
+                        placeDao.deleteTravel(selectedTravel)
+                        val intent = Intent(this@AddActivity, TravelActivity::class.java)
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                        startActivity(intent)
+                        Toast.makeText(this@AddActivity, selectedTravel.name + " silindi!", Toast.LENGTH_SHORT).show()
+                    }
 
                     //enlem ve boylamı alabiliyorum
                     travelLatitude = selectedTravel.latitude
@@ -322,7 +353,6 @@ class AddActivity : AppCompatActivity() {
         }
 
     }
-
 
     fun selectImage(view: View) {
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) { // Android API >= 33

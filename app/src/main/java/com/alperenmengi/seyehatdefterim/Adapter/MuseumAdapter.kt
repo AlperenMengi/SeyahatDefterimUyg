@@ -4,6 +4,7 @@ import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.alperenmengi.seyehatdefterim.R
 import com.alperenmengi.seyehatdefterim.databinding.RecyclerRowBinding
 import com.alperenmengi.seyehatdefterim.model.Museum
 import com.alperenmengi.seyehatdefterim.view.AddActivity
@@ -21,13 +22,12 @@ class MuseumAdapter(val museumList : ArrayList<Museum>) : RecyclerView.Adapter<M
 
     override fun onBindViewHolder(holder: MuseumHolder, position: Int) {
         holder.binding.nameText.text = museumList.get(position).name
-        holder.itemView.setOnClickListener(){
-            // go to detail activity
+        holder.binding.icon.setImageResource(R.drawable.click)
+        holder.binding.cardView.setOnClickListener(){
             val intent = Intent(holder.itemView.context, AddActivity::class.java)
             intent.putExtra("place", "MuseumDetails")
             intent.putExtra("id", museumList.get(position).id)//seçilen yerin idsi
             holder.itemView.context.startActivity(intent)
-
         }
     }
 

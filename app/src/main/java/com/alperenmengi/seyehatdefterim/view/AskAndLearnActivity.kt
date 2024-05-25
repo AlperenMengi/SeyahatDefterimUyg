@@ -1,16 +1,17 @@
 package com.alperenmengi.seyehatdefterim.view
 
-
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.speech.tts.TextToSpeech
 import android.util.Log
+import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import com.alperenmengi.seyehatdefterim.R
+import com.alperenmengi.seyehatdefterim.databinding.ActivityAskAndLearnBinding
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -25,40 +26,34 @@ import java.util.Locale
 
 class AskAndLearnActivity : AppCompatActivity(), TextToSpeech.OnInitListener  {
 
-    private lateinit var prompt: EditText
-    private lateinit var response: TextView
-    private lateinit var send: Button
-
     private var tts : TextToSpeech? = null
-
     private val client = OkHttpClient()
+    private lateinit var binding : ActivityAskAndLearnBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_ask_and_learn)
+        binding = ActivityAskAndLearnBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
 
-        prompt = findViewById(R.id.editTextTex)
-        send = findViewById(R.id.button)
-        response = findViewById(R.id.textView)
+        //binding.response.text = "Türkiyenin başkenti ankaradır"
 
         // TextToSpeech(Context: this, OnInitListener: this)
         tts = TextToSpeech(this, this)
 
-        send.setOnClickListener {
-            val question = prompt.text.toString()
+        binding.send.setOnClickListener {
+            val question = binding.prompt.text.toString()
             Toast.makeText(this, question, Toast.LENGTH_LONG).show()
             getResponse(question){apiResponse ->
                 runOnUiThread{
-                    response.text = apiResponse
-                    if (!response.text.equals("")){
+                    binding.scrollView.visibility = View.VISIBLE
+                    binding.response.text = apiResponse
+                    if (!binding.response.text.equals("")){
                         speakOut()
                     }
                 }
             }
-
         }
-
-
     }
 
     fun getResponse(question: String, callback:(String) -> Unit){
@@ -106,7 +101,7 @@ class AskAndLearnActivity : AppCompatActivity(), TextToSpeech.OnInitListener  {
     }
 
     private fun speakOut() {
-        val text =  response.text.toString()
+        val text =  binding.response.text.toString()
         tts!!.speak(text, TextToSpeech.QUEUE_FLUSH, null,"")
     }
 
@@ -133,6 +128,7 @@ class AskAndLearnActivity : AppCompatActivity(), TextToSpeech.OnInitListener  {
         }
     }
 }
+
 
 
 

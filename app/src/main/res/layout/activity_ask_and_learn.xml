@@ -5,38 +5,55 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:padding="16dp"
+    android:background="@android:color/background_light"
     tools:context=".view.AskAndLearnActivity">
 
     <EditText
-        android:id="@+id/editTextTex"
+        android:id="@+id/prompt"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:textSize="25sp"
+        android:layout_height="60dp"
+        android:hint="Sor"
+        android:textSize="18sp"
+        android:padding="12dp"
+        android:background="@android:drawable/editbox_background"
+        android:layout_marginBottom="16dp"
         android:inputType="text"
-        android:layout_margin="5dp"
-        android:hint="Promptunuzu Buraya Giriniz!"
         tools:layout_editor_absoluteX="0dp"
         tools:layout_editor_absoluteY="76dp" />
 
     <Button
-        android:id="@+id/button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Gönder"
+        android:id="@+id/send"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="Öğren"
         android:textSize="15sp"
-        android:layout_margin="5dp"
+        android:padding="5dp"
+        android:background="@android:color/holo_blue_light"
+        android:textColor="@android:color/white"
+        android:layout_marginBottom="16dp"
         tools:layout_editor_absoluteX="149dp"
         tools:layout_editor_absoluteY="211dp" />
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Cevap burada gözükecektir"
-        android:layout_margin="5dp"
-        android:textSize="25sp"
-        tools:layout_editor_absoluteX="164dp"
-        tools:layout_editor_absoluteY="311dp" />
 
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@android:drawable/editbox_background"
+        android:layout_marginBottom="16dp"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/response"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Cevap burada gözükecektir"
+            android:textSize="18sp"
+            android:padding="4dp"
+            android:textColor="@android:color/black"
+            tools:layout_editor_absoluteX="164dp"
+            tools:layout_editor_absoluteY="311dp"/>
+    </ScrollView>
 
 </LinearLayout>
