@@ -14,6 +14,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.PersistableBundle
 import android.provider.MediaStore
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
@@ -114,6 +116,11 @@ class AddActivity : AppCompatActivity() {
                     val byteArray = selectedHotel.image
                     val bitmap = BitmapFactory.decodeByteArray(byteArray, 0 , byteArray.size)
 
+                    if (selectedHotel.latitude == null && selectedHotel.longitude == null){
+                        binding.textView4.visibility = View.GONE
+                        binding.locationButton.visibility = View.GONE
+                    }
+
                     // image ve text ve spinnerlerin set edilmesi
                     binding.imageView.setImageBitmap(bitmap)
                     binding.nameText.setText(selectedHotel.name)
@@ -140,12 +147,27 @@ class AddActivity : AppCompatActivity() {
                     binding.saveButton.text = "Sil"
                     binding.saveButton.setBackgroundColor(ContextCompat.getColor(this@AddActivity, R.color.red))
                     binding.saveButton.setOnClickListener(){
-                        placeDao.deleteHotel(selectedHotel)
-                        val intent = Intent(this@AddActivity, HotelActivity::class.java)
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                        startActivity(intent)
-                        Toast.makeText(this@AddActivity, selectedHotel.name + " silindi!", Toast.LENGTH_SHORT).show()
+                        val alert = AlertDialog.Builder(this)
+                        alert.setTitle("Dikkat")
+                        alert.setMessage(" ${selectedHotel.name} silinecektir. Emin misiniz?")
+                        alert.setPositiveButton("Evet", object : DialogInterface.OnClickListener {
+                            override fun onClick(dialog: DialogInterface?, which: Int) {
+                                placeDao.deleteHotel(selectedHotel)
+                                val intent = Intent(this@AddActivity, HotelActivity::class.java)
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                                startActivity(intent)
+                                finish()
+                                Toast.makeText(this@AddActivity, selectedHotel.name + " silindi!", Toast.LENGTH_SHORT).show()
+                            }
+                        })
+                        alert.setNegativeButton("Hayır", object : DialogInterface.OnClickListener{
+                            override fun onClick(dialog: DialogInterface?, which: Int) {
+                            }
+                        })
+                        alert.setCancelable(false)
+                        alert.show()
                     }
+
 
                     //enlem ve boylamı alabiliyorum
                     hotelLatitude = selectedHotel.latitude
@@ -159,7 +181,9 @@ class AddActivity : AppCompatActivity() {
                         intent.putExtra("savedLongitude", hotelLongitude)
                         intent.putExtra("savedPlaceName", selectedHotel.name)
                         intent.putExtra("info", "old")
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                         startActivity(intent)
+                        finish()
                     }
                 }
             }
@@ -202,11 +226,25 @@ class AddActivity : AppCompatActivity() {
                     binding.saveButton.text = "Sil"
                     binding.saveButton.setBackgroundColor(ContextCompat.getColor(this@AddActivity, R.color.red))
                     binding.saveButton.setOnClickListener(){
-                        placeDao.deleteMuseum(selectedMuseum)
-                        val intent = Intent(this@AddActivity, MuseumActivity::class.java)
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                        startActivity(intent)
-                        Toast.makeText(this@AddActivity, selectedMuseum.name + " silindi!", Toast.LENGTH_SHORT).show()
+                        val alert = AlertDialog.Builder(this)
+                        alert.setTitle("Dikkat")
+                        alert.setMessage(" ${selectedMuseum.name} silinecektir. Emin misiniz?")
+                        alert.setPositiveButton("Evet", object : DialogInterface.OnClickListener {
+                            override fun onClick(dialog: DialogInterface?, which: Int) {
+                                placeDao.deleteMuseum(selectedMuseum)
+                                val intent = Intent(this@AddActivity, MuseumActivity::class.java)
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                                startActivity(intent)
+                                finish()
+                                Toast.makeText(this@AddActivity, selectedMuseum.name + " silindi!", Toast.LENGTH_SHORT).show()
+                            }
+                        })
+                        alert.setNegativeButton("Hayır", object : DialogInterface.OnClickListener{
+                            override fun onClick(dialog: DialogInterface?, which: Int) {
+                            }
+                        })
+                        alert.setCancelable(false)
+                        alert.show()
                     }
 
                     //enlem ve boylamı alabiliyorum
@@ -221,7 +259,9 @@ class AddActivity : AppCompatActivity() {
                         intent.putExtra("savedLongitude", museumLongitude)
                         intent.putExtra("savedPlaceName", selectedMuseum.name)
                         intent.putExtra("info", "old")
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                         startActivity(intent)
+                        finish()
                     }
                 }
             }
@@ -264,11 +304,25 @@ class AddActivity : AppCompatActivity() {
                     binding.saveButton.text = "Sil"
                     binding.saveButton.setBackgroundColor(ContextCompat.getColor(this@AddActivity, R.color.red))
                     binding.saveButton.setOnClickListener(){
-                        placeDao.deleteTravel(selectedTravel)
-                        val intent = Intent(this@AddActivity, TravelActivity::class.java)
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                        startActivity(intent)
-                        Toast.makeText(this@AddActivity, selectedTravel.name + " silindi!", Toast.LENGTH_SHORT).show()
+                        val alert = AlertDialog.Builder(this)
+                        alert.setTitle("Dikkat")
+                        alert.setMessage(" ${selectedTravel.name} silinecektir. Emin misiniz?")
+                        alert.setPositiveButton("Evet", object : DialogInterface.OnClickListener {
+                            override fun onClick(dialog: DialogInterface?, which: Int) {
+                                placeDao.deleteTravel(selectedTravel)
+                                val intent = Intent(this@AddActivity, TravelActivity::class.java)
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                                startActivity(intent)
+                                finish()
+                                Toast.makeText(this@AddActivity, selectedTravel.name + " silindi!", Toast.LENGTH_SHORT).show()
+                            }
+                        })
+                        alert.setNegativeButton("Hayır", object : DialogInterface.OnClickListener{
+                            override fun onClick(dialog: DialogInterface?, which: Int) {
+                            }
+                        })
+                        alert.setCancelable(false)
+                        alert.show()
                     }
 
                     //enlem ve boylamı alabiliyorum
@@ -283,7 +337,9 @@ class AddActivity : AppCompatActivity() {
                         intent.putExtra("savedLongitude", travelLongitude)
                         intent.putExtra("savedPlaceName", selectedTravel.name)
                         intent.putExtra("info", "old")
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                         startActivity(intent)
+                        finish()
                     }
                 }
             }
@@ -291,10 +347,6 @@ class AddActivity : AppCompatActivity() {
         }
     }
 
-    //EN SON ROOM İLE VERİ KAYDETTİM AMA SADECE HOTELLERİ KAYDETTİM DİĞERLERİ İÇİN DE YAPILMALI
-    // İNTENT İLE NEREDEN GELDİĞİMİ ANLAMAYA ÇALIŞTIM HEMEN AŞAĞIDAKİ KOD
-    // BYTEARRAYİ KABUL ETMİYOR ONU UDEMYDEN BAKIP ÖYLE YAPICAM MUHTEMELEN
-    // ŞİMDİLİK BU KADAR
     fun kaydet(view: View) {
 
         val placeName = binding.nameText.text.toString()
@@ -303,6 +355,7 @@ class AddActivity : AppCompatActivity() {
         val placeDescription = binding.descriptionText.text.toString()
         val placeLatitude = selectedLatitude
         val placeLongitude = selectedLongitude
+
         //Toast.makeText(this, " ${placeName} - " + "${placeTag} - " + "${placeSecurity} - " + "${placeDescription}", Toast.LENGTH_LONG).show()
         if (selectedBitmap != null){
 
@@ -312,7 +365,7 @@ class AddActivity : AppCompatActivity() {
 
             // veri tabanı işlemleri try-catch içinde
             try {
-                Toast.makeText(this, place, Toast.LENGTH_LONG).show()
+                //Toast.makeText(this, place, Toast.LENGTH_LONG).show()
                 //val database = this.openOrCreateDatabase("Places", MODE_PRIVATE, null)
                 if (place == "hotel" || place2 == "hotel"){
                     val hotel = Hotel(placeName, placeTag, placeSecurity, placeDescription, placeLatitude, placeLongitude, byteArray)
@@ -337,16 +390,19 @@ class AddActivity : AppCompatActivity() {
                 val intent = Intent(this@AddActivity, HotelActivity::class.java)
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 startActivity(intent)
+                finish()
             }
             if (place == "museum" || place2 == "museum"){
                 val intent = Intent(this@AddActivity, MuseumActivity::class.java)
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 startActivity(intent)
+                finish()
             }
             if (place == "travel" || place2 == "travel"){
                 val intent = Intent(this@AddActivity, TravelActivity::class.java)
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 startActivity(intent)
+                finish()
             }
         }else{
             Toast.makeText(this, "Lütfen kaydetmek istediğiniz yerin fotoğrafını seçiniz!", Toast.LENGTH_LONG).show()
@@ -448,6 +504,7 @@ class AddActivity : AppCompatActivity() {
             if (result){
                 //permission granted
                 val intentToGalley = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+                intentToGalley.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 activityResultLauncher.launch(intentToGalley)
             }
             else{
@@ -500,7 +557,11 @@ class AddActivity : AppCompatActivity() {
                 intent.putExtra("info", "new")
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 startActivity(intent)
+                finish()
             }
+        })
+        alertDialog.setNegativeButton("Konum Seçmeden Devam Et", object : DialogInterface.OnClickListener{
+            override fun onClick(dialog: DialogInterface?, which: Int) { }
         })
         alertDialog.setCancelable(false)
         alertDialog.show()
@@ -533,4 +594,5 @@ class AddActivity : AppCompatActivity() {
         binding.securitySpinner.adapter = securityAdapter
 
     }
+
 }

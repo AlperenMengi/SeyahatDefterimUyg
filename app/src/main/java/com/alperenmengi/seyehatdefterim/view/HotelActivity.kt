@@ -64,7 +64,6 @@ class HotelActivity : AppCompatActivity() {
         if (item.itemId == R.id.addHotel){
             val intent = Intent(this@HotelActivity, AddActivity::class.java)
             intent.putExtra("place", "hotel")
-            finish()
             startActivity(intent)
 
         }

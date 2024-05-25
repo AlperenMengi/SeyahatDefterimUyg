@@ -1,7 +1,10 @@
 package com.alperenmengi.seyehatdefterim.view
 
+import android.app.Activity
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.speech.RecognizerIntent
 import android.speech.tts.TextToSpeech
 import android.util.Log
 import android.view.View
@@ -10,6 +13,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import com.alperenmengi.seyehatdefterim.R
 import com.alperenmengi.seyehatdefterim.databinding.ActivityAskAndLearnBinding
 import okhttp3.Call
@@ -28,15 +32,31 @@ class AskAndLearnActivity : AppCompatActivity(), TextToSpeech.OnInitListener  {
 
     private var tts : TextToSpeech? = null
     private val client = OkHttpClient()
+    private var clean : Boolean = false
     private lateinit var binding : ActivityAskAndLearnBinding
+
+    private val micVoice =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (it.resultCode == Activity.RESULT_OK) {
+                it.data?.apply {
+                    getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)?.let { resultList ->
+                        if (resultList.isNotEmpty()) {
+                            try {
+                                setResult(resultList[0])
+                            } catch (e: Exception) {
+                                Log.d("SpeechToText", "micVoiceActivity: ${e.message}")
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAskAndLearnBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
-
-        //binding.response.text = "Türkiyenin başkenti ankaradır"
 
         // TextToSpeech(Context: this, OnInitListener: this)
         tts = TextToSpeech(this, this)
@@ -50,10 +70,23 @@ class AskAndLearnActivity : AppCompatActivity(), TextToSpeech.OnInitListener  {
                     binding.response.text = apiResponse
                     if (!binding.response.text.equals("")){
                         speakOut()
+                        clean = true // speakOut çalıştıysa prompt kısmı dolu demektir. clean true oldu
                     }
                 }
             }
         }
+        binding.micImage.setOnClickListener(){
+            onMicClick()
+        }
+
+        if (clean){
+            binding.send.setText("Temizle")
+            binding.send.setOnClickListener(){
+                binding.prompt.text.clear()
+                clean = false
+            }
+        }
+
     }
 
     fun getResponse(question: String, callback:(String) -> Unit){
@@ -100,17 +133,24 @@ class AskAndLearnActivity : AppCompatActivity(), TextToSpeech.OnInitListener  {
         })
     }
 
+    private fun onMicClick() {
+        try {
+            val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
+            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "tr")
+            micVoice.launch(intent)
+        } catch (e: Exception) {
+            Log.d("SpeechToText", "onUser1MicClick: ${e.message}")
+        }
+    }
+
+    private fun setResult(text : String){
+        binding.prompt.setText(text)
+    }
+
     private fun speakOut() {
         val text =  binding.response.text.toString()
         tts!!.speak(text, TextToSpeech.QUEUE_FLUSH, null,"")
-    }
-
-    override fun onDestroy() {
-        if (tts != null){
-            tts!!.stop()
-            tts!!.shutdown()
-        }
-        super.onDestroy()
     }
 
     //TextToSpeech'ten geliyor burası.
@@ -121,36 +161,18 @@ class AskAndLearnActivity : AppCompatActivity(), TextToSpeech.OnInitListener  {
             val result = tts!!.setLanguage(Locale("tr", "TR"))
 
             if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
-                println("The Language not supported!")
+                println("Dil kabul edilmiyor")
             } else {
                 //binding.speech.isEnabled = true
             }
         }
     }
-}
 
-
-
-
-/*
-//ONCREATE İÇİNDEYDİ
-    prompt.setOnEditorActionListener(TextView.OnEditorActionListener { v, actionId, event ->
-    if (actionId == EditorInfo.IME_ACTION_SEND) {
-
-        // setting response tv on below line.
-        response.text = "Please wait.."
-
-        // validating text
-        val question = prompt.text.toString().trim()
-        Toast.makeText(this,question, Toast.LENGTH_SHORT).show()
-        if(question.isNotEmpty()){
-            getResponse(question) { apiResponse ->
-                runOnUiThread {
-                    response.text = apiResponse
-                }
-            }
+    override fun onDestroy() {
+        if (tts != null){
+            tts!!.stop()
+            tts!!.shutdown()
         }
-        return@OnEditorActionListener true
+        super.onDestroy()
     }
-    false
-})*/
+}
