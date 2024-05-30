@@ -63,7 +63,7 @@ class AskAndLearnActivity : AppCompatActivity(), TextToSpeech.OnInitListener  {
 
         binding.send.setOnClickListener {
             val question = binding.prompt.text.toString()
-            Toast.makeText(this, question, Toast.LENGTH_LONG).show()
+            //Toast.makeText(this, question, Toast.LENGTH_LONG).show()
             getResponse(question){apiResponse ->
                 runOnUiThread{
                     binding.scrollView.visibility = View.VISIBLE
@@ -90,7 +90,10 @@ class AskAndLearnActivity : AppCompatActivity(), TextToSpeech.OnInitListener  {
     }
 
     fun getResponse(question: String, callback:(String) -> Unit){
-        val key = "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" //alprnmengi@gmail.com
+        val key = "sk-proj-PG0EljIt8us5IR3WSUlRT3BlbkFJSvvAIHEMvlsQPPfHXtqd" // seyahatdefterim1@gmail.com
+        //val key = "sk-proj-ZoUT4dm8QdcgfC677NRwT3BlbkFJVom96QUj9mdVE0X5eBVa" // alperenmengiresmi@gmail.com
+        //val key = "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" //alprnmengi@gmail.com
+        //val key = "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" //alprnmengi@gmail.com
         //val key = "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" // alprnmengi97@gmail.com
         val url = "https://api.openai.com/v1/completions"
 
@@ -127,7 +130,7 @@ class AskAndLearnActivity : AppCompatActivity(), TextToSpeech.OnInitListener  {
                 }
                 val jsonObject= JSONObject(body)
                 val jsonArray: JSONArray =jsonObject.getJSONArray("choices")
-                val textResult=jsonArray.getJSONObject(0).getString("text")
+                val textResult=jsonArray.getJSONObject(0).getString("text").trimStart('?', ' ')
                 callback(textResult)
             }
         })
@@ -138,6 +141,7 @@ class AskAndLearnActivity : AppCompatActivity(), TextToSpeech.OnInitListener  {
             val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
             intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
             intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "tr")
+            intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Konuşabilirsiniz!")
             micVoice.launch(intent)
         } catch (e: Exception) {
             Log.d("SpeechToText", "onUser1MicClick: ${e.message}")
